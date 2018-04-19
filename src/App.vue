@@ -2,8 +2,8 @@
   <div id="app">
     <!-- <img src="./assets/logo.png"> -->
     {{ message }}
-    <hello/>
-    <todo-item></todo-item>
+    <v-hello/>
+    <v-todo-item></v-todo-item>
   </div>
 </template>
 
@@ -14,13 +14,13 @@ export default {
   name: 'App',
   data(){
     return {
-      message :'ccc'
+      message :'start'
     }
   },
   components: {
-    hello,
-    'todo-item':{
-      template:'<div>这是个组件</div>'
+    'v-hello':hello,
+    'v-todo-item':{
+      template:'<div>end</div>'
     }
   }
 }

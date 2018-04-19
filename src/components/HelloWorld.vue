@@ -1,40 +1,86 @@
 <template>
   <div class="hello">
-    <h1 v-bind:title="time">{{ msg }}</h1>
-    <h2>Essential Links</h2>
-  <input v-model="msg">
-  <button v-on:click="reverseMessage">逆转消息</button>
-  <p v-if="seen">你看到我了</p>
-  <ol>
-    <li v-for="todo in todos">{{ todo.text }}</li>
-  </ol>
+    <v-Header></v-Header>
+    <h1 v-bind:title="time" v-bind:id="'ID_'+dynamicId">{{ h1 }}</h1>
+    <h2 v-html="h2"></h2>
+    <input v-model="h1">
+    <button v-on:click="reverseMessage" v-bind:disabled="isButtonDisabled">逆转消息</button>
+    <p v-if="seen">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
+    <ol>
+      <li v-for="todo in todos">{{ todo.id }}.{{ todo.text }}</li>
+    </ol>
+    <v-todo-item v-for="item in todos" v-bind:todoing="item" v-bind:id="'todo_'+item.id"></v-todo-item>
+    <a v-bind:href="url" v-html="url"></a>
+    <form v-on:submit.prevent="onSubmit">
+      <input type="submit" name="" value="提交" />
+    </form>
+    <v-Footer></v-Footer>
   </div>
 </template>
 
 <script>
+import vHeader from './vHeader'
+import vFooter from './vFooter'
+
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your App',
+      h1: 'Welcome to Your App',
+      h2:'Essential Links',
+      url:location.href,
       time:'页面加载于：'+new Date().toLocaleString(),
+      dynamicId:'dynamicId',
+      isButtonDisabled:false,
       seen : true,
       todos :[
-        {text:'学习javascript'},
-        {text:'学习Vue'},
-        {text:'整个牛项目'},
-        {text:'找个靠谱岗位'}
+        {id:0, text:'学习javascript'},
+        {id:1, text:'学习Vue'},
+        {id:2, text:'整个牛项目'},
+        {id:3, text:'找个靠谱岗位'}
       ]
     }
   },
+  created:function(){
+    console.log('实例被创建，'+this.time);
+  },
+  mounted:function(){
+    this.$nextTick(function(){
+      console.log('实例全部挂载');
+    });
+    console.log('实例被挂载，'+this.time);
+  },
+  updated:function(){
+    this.$nextTick(function(){
+      console.log('实例全部更新');
+    });
+    console.log('实例被更新，'+this.time);
+  },
+  destroyed:function(){
+    console.log('销毁');
+  },
   methods:{
     reverseMessage:function(){
-      this.msg = this.msg.split('').reverse().join('');
-      this.seen = false;
-      this.todos.push({text:'新项目'});
+      const todoId = this.todos.length;
+      this.h1 = this.h1.split('').reverse().join('');
+      this.seen = !this.seen;
+      this.todos.push({id:todoId, text:'新项目'});
+      // this.$destroy();
+    },
+    onSubmit:function(){
+      console.log('提交');
+    }
+  },
+  components:{
+    'v-Header':vHeader,
+    'v-Footer':vFooter,
+    'v-todo-item':{
+      props:['todoing'],
+      template:'<div>{{ todoing.id }}.这也是组件-{{ todoing.text }}</div>'
     }
   }
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
