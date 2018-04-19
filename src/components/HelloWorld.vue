@@ -5,6 +5,7 @@
     <h2 v-html="h2"></h2>
     <input v-model="h1">
     <button v-on:click="reverseMessage" v-bind:disabled="isButtonDisabled">逆转消息</button>
+    <button @click="doSomething">添加项目</button>
     <p v-if="seen">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
     <ol>
       <li v-for="todo in todos">{{ todo.id }}.{{ todo.text }}</li>
@@ -61,14 +62,16 @@ export default {
   },
   methods:{
     reverseMessage:function(){
-      const todoId = this.todos.length;
       this.h1 = this.h1.split('').reverse().join('');
       this.seen = !this.seen;
-      this.todos.push({id:todoId, text:'新项目'});
       // this.$destroy();
     },
     onSubmit:function(){
       console.log('提交');
+    },
+    doSomething:function(){
+      const todoId = this.todos.length;
+      this.todos.push({id:todoId, text:this.h1});      
     }
   },
   components:{
