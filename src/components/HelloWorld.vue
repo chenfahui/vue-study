@@ -1,12 +1,12 @@
 <template>
   <div class="hello">
     <v-Header></v-Header>
-    <h1 v-bind:title="time" v-bind:id="'ID_'+dynamicId">{{ h1 }}</h1>
-    <h2 v-html="h2"></h2>
-    <input v-model="h1">
+    <h1 v-bind:title="reversedH1 + time" v-bind:id="'ID_'+dynamicId">{{ h1 }}</h1>
+    <h2 v-html="h2" v-bind:class="{'title2':seen}" class="title"></h2>
+    <input v-model="h1" v-bind:class="classObject">
     <button v-on:click="reverseMessage" v-bind:disabled="isButtonDisabled">逆转消息</button>
     <button @click="doSomething">添加项目</button>
-    <p v-if="seen">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
+    <p v-if="seen" :class="['seen','seenToo',dynamicId]">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
     <ol>
       <li v-for="todo in todos">{{ todo.id }}.{{ todo.text }}</li>
     </ol>
@@ -25,7 +25,7 @@ import vFooter from './vFooter'
 
 export default {
   name: 'HelloWorld',
-  data () {
+  data() {
     return {
       h1: 'Welcome to Your App',
       h2:'Essential Links',
@@ -40,6 +40,16 @@ export default {
         {id:2, text:'整个牛项目'},
         {id:3, text:'找个靠谱岗位'}
       ]
+    }
+  },
+  computed:{ 
+    reversedH1:{
+      get:function(){
+        return this.h1.split('').reverse().join('');
+      }
+    },
+    classObject:function(){
+      return 'text';
     }
   },
   created:function(){
