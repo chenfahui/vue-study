@@ -1,12 +1,13 @@
 <template>
   <div class="hello">
     <v-Header></v-Header>
-    <h1 v-bind:title="reversedH1 + time" v-bind:id="'ID_'+dynamicId">{{ h1 }}</h1>
+    <h1 v-bind:title="reversedH1 + time" v-bind:id="'ID_'+dynamicId" v-bind:style="{'text-align':'center'}">{{ h1 }}</h1>
     <h2 v-html="h2" v-bind:class="{'title2':seen}" class="title"></h2>
     <input v-model="h1" v-bind:class="classObject">
     <button v-on:click="reverseMessage" v-bind:disabled="isButtonDisabled">逆转消息</button>
     <button @click="doSomething">添加项目</button>
     <p v-if="seen" :class="['seen','seenToo',dynamicId]">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
+    <p v-else>你看不到我了</p>
     <ol>
       <li v-for="todo in todos">{{ todo.id }}.{{ todo.text }}</li>
     </ol>
@@ -15,6 +16,15 @@
     <form v-on:submit.prevent="onSubmit">
       <input type="submit" name="" value="提交" />
     </form>
+    <div v-if="loginType == 'username'">
+      <label>Username</label>
+      <input placeholder="Enter you username" />
+    </div>
+    <div v-else-if="loginType == 'email'">
+      <label>Email</label>
+      <input placeholder="Enter you email" />
+    </div>
+    <button v-on:click="toggleLogin">Toggle login type</button>
     <v-Footer></v-Footer>
   </div>
 </template>
@@ -39,7 +49,8 @@ export default {
         {id:1, text:'学习Vue'},
         {id:2, text:'整个牛项目'},
         {id:3, text:'找个靠谱岗位'}
-      ]
+      ],
+      loginType:'username'
     }
   },
   computed:{ 
@@ -82,6 +93,10 @@ export default {
     doSomething:function(){
       const todoId = this.todos.length;
       this.todos.push({id:todoId, text:this.h1});      
+    },
+    toggleLogin:function(){
+      console.log(this.loginType);
+      this.loginType = 'email';
     }
   },
   components:{
