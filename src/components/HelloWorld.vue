@@ -8,8 +8,9 @@
     <button @click="doSomething">添加项目</button>
     <p v-if="seen" :class="['seen','seenToo',dynamicId]">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
     <p v-else>你看不到我了</p>
+    <p v-show="seen">display:inline;</p>
     <ol>
-      <li v-for="todo in todos">{{ todo.id }}.{{ todo.text }}</li>
+      <li v-for="(todo, index) in todos">{{index}} - {{ todo.id }}.{{ todo.text }}</li>
     </ol>
     <v-todo-item v-for="item in todos" v-bind:todoing="item" v-bind:id="'todo_'+item.id"></v-todo-item>
     <a v-bind:href="url" v-html="url"></a>
@@ -18,13 +19,21 @@
     </form>
     <div v-if="loginType == 'username'">
       <label>Username</label>
-      <input placeholder="Enter you username" />
+      <input placeholder="Enter you firstname" />
+      <input placeholder="Enter you email" key="email-input" />
     </div>
     <div v-else-if="loginType == 'email'">
       <label>Email</label>
-      <input placeholder="Enter you email" />
+      <input placeholder="Enter you email" key="email-input" />
     </div>
     <button v-on:click="toggleLogin">Toggle login type</button>
+    <ul>
+      <li v-for="(item, index) in items" >{{index}}.{{item.message}}</li>
+    </ul>
+    <button v-on:click="itemsSort">排序</button>
+    <ul>
+      <li v-for="(value, key, index) in object">{{index}}.{{key}}:{{value}}</li>
+    </ul>
     <v-Footer></v-Footer>
   </div>
 </template>
@@ -50,6 +59,15 @@ export default {
         {id:2, text:'整个牛项目'},
         {id:3, text:'找个靠谱岗位'}
       ],
+      items:[
+        {id:'001', message:'Foo' },
+        {id:'002', message:'Bar' }
+      ],
+      object:{
+        firstname:'John',
+        lastname:'Doe',
+        age:30
+      },
       loginType:'username'
     }
   },
@@ -96,7 +114,17 @@ export default {
     },
     toggleLogin:function(){
       console.log(this.loginType);
-      this.loginType = 'email';
+      if(this.loginType == 'email'){
+        this.loginType = 'username';
+      }else{
+        this.loginType = 'email';        
+      }
+    },
+    itemsSort:function(){
+      this.items = [
+        {id:'001', message:'Bar' },
+        {id:'002', message:'Foo' }
+      ]
     }
   },
   components:{
