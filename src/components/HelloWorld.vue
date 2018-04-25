@@ -3,16 +3,19 @@
     <v-Header></v-Header>
     <h1 v-bind:title="reversedH1 + time" v-bind:id="'ID_'+dynamicId" v-bind:style="{'text-align':'center'}">{{ h1 }}</h1>
     <h2 v-html="h2" v-bind:class="{'title2':seen}" class="title"></h2>
-    <input v-model="h1" v-bind:class="classObject">
+    <input v-model="h1" v-bind:class="classObject" v-on:keyup.enter="doSomething" />
     <button v-on:click="reverseMessage" v-bind:disabled="isButtonDisabled">逆转消息</button>
     <button @click="doSomething">添加项目</button>
+    <button @click.once="doSomething">添加项目(一次)</button>
+    <button @click.ctrl="doSomething">添加项目(含ctrl)</button>
+    <button @click.ctrl.exact="doSomething">添加项目(仅ctrl)</button>
     <p v-if="seen" :class="['seen','seenToo',dynamicId]">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
     <p v-else>你看不到我了</p>
     <p v-show="seen">display:inline;</p>
     <ol>
       <li v-for="(todo, index) in todos">{{index}} - {{ todo.id }}.{{ todo.text }}</li>
     </ol>
-    <v-todo-item v-for="item in todos" v-bind:todoing="item" v-bind:id="'todo_'+item.id"></v-todo-item>
+    <v-todo-item v-for="(item, index) in todos" v-bind:todoing="item" v-bind:id="'todo_'+item.id" v-on:remove="todos.splice(index, 1)"></v-todo-item>
     <a v-bind:href="url" v-html="url"></a>
     <form v-on:submit.prevent="onSubmit">
       <input type="submit" name="" value="提交" />
@@ -34,6 +37,46 @@
     <ul>
       <li v-for="(value, key, index) in object">{{index}}.{{key}}:{{value}}</li>
     </ul>
+    <ul v-if="numbers.length">
+      <li v-for="number in numbers" v-if="number % 2 == 0">{{number}}</li>
+    </ul>
+    <ul>
+      <li v-for="number in evenNumbers">{{number}}</li>
+    </ul>
+    <ul>
+      <li v-for="number in even(numbers)">{{number}}</li>
+    </ul>
+    <button v-on:click="counter += 1">点击{{counter}}次</button>
+    <button v-on:click="greet('greet')">greet</button>
+    <input type="checkbox" v-model="isChecked" id="isChecked" /><label for="isChecked">{{isChecked}}</label>
+    <div>
+      <input type="checkbox" id="Jack" value="Jack" v-model="checkNames" />
+      <label for="Jack">Jack</label>
+      <input type="checkbox" id="John" value="John" v-model="checkNames"  />
+      <label for="John">John</label>
+      <input type="checkbox" id="Mike" value="Mike" v-model="checkNames"  />
+      <label for="Mike">Mike</label>
+    </div>
+    <div>
+      已选择：{{checkNames}}
+    </div>
+    <div>
+      <input type="radio" id="one" value="one" v-model="picked">
+      <label for="one">one</label>
+      <input type="radio" id="two" value="two" v-model="picked">
+      <label for="two">two</label>
+    </div>
+    <div>
+      Picked:{{ picked }}
+    </div>
+    <div>
+      <select v-model="letter">
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+    </div>
+    下拉选择：{{letter}}
     <v-Footer></v-Footer>
   </div>
 </template>
@@ -68,7 +111,13 @@ export default {
         lastname:'Doe',
         age:30
       },
-      loginType:'username'
+      loginType:'username',
+      numbers:[1,2,3,4,5],
+      counter:0,
+      isChecked:true,
+      checkNames:[],
+      picked:'',
+      letter:''
     }
   },
   computed:{ 
@@ -79,6 +128,11 @@ export default {
     },
     classObject:function(){
       return 'text';
+    },
+    evenNumbers:function(){
+      return this.numbers.filter(function(number){
+        return number % 2 == 0;
+      });
     }
   },
   created:function(){
@@ -110,7 +164,7 @@ export default {
     },
     doSomething:function(){
       const todoId = this.todos.length;
-      this.todos.push({id:todoId, text:this.h1});      
+      this.todos.push({id:todoId, text:this.h1});
     },
     toggleLogin:function(){
       console.log(this.loginType);
@@ -125,6 +179,17 @@ export default {
         {id:'001', message:'Bar' },
         {id:'002', message:'Foo' }
       ]
+    },
+    even:function(numbers){
+      return numbers.filter(function(number){
+        return number % 2 == 1;
+      });
+    },
+    greet:function(message){
+      alert('HelloWorld'+this.h1);
+      if(message){
+        alert(message);
+      }
     }
   },
   components:{
@@ -132,7 +197,7 @@ export default {
     'v-Footer':vFooter,
     'v-todo-item':{
       props:['todoing'],
-      template:'<div>{{ todoing.id }}.这也是组件-{{ todoing.text }}</div>'
+      template:'<div>{{ todoing.id }}.这也是组件-{{ todoing.text }} <button v-on:click="$emit(\'remove\')">X</button></div>'
     }
   }
 }
