@@ -2,8 +2,8 @@
   <div class="hello">
     <v-Header></v-Header>
     <h1 v-bind:title="reversedH1 + time" v-bind:id="'ID_'+dynamicId" v-bind:style="{'text-align':'center'}">{{ h1 }}</h1>
-    <h2 v-html="h2" v-bind:class="{'title2':seen}" class="title"></h2>
-    <input v-model="h1" v-bind:class="classObject" v-on:keyup.enter="doSomething" />
+    <h2 v-html="h2+age" v-bind:class="{'title2':seen}" class="title"></h2>
+    <input v-model.lazy.trim="h1" v-bind:class="classObject" v-on:keyup.enter="doSomething" />
     <button v-on:click="reverseMessage" v-bind:disabled="isButtonDisabled">逆转消息</button>
     <button @click="doSomething">添加项目</button>
     <button @click.once="doSomething">添加项目(一次)</button>
@@ -12,10 +12,14 @@
     <p v-if="seen" :class="['seen','seenToo',dynamicId]">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
     <p v-else>你看不到我了</p>
     <p v-show="seen">display:inline;</p>
+    <div>      
+      <input type="number" v-model.number="age" />
+      <input type="number" v-bind:value="age" v-on:input="age = $event.target.value" >
+    </div>
     <ol>
       <li v-for="(todo, index) in todos">{{index}} - {{ todo.id }}.{{ todo.text }}</li>
     </ol>
-    <v-todo-item v-for="(item, index) in todos" v-bind:todoing="item" v-bind:id="'todo_'+item.id" v-on:remove="todos.splice(index, 1)"></v-todo-item>
+    <v-todo-item v-for="(item, index) in todos" v-bind:todos="todos" v-bind:todoing="item" v-bind:indexNumber="index" v-bind:id="'todo_'+item.id" v-on:remove="todos.splice(index, 1)"></v-todo-item>
     <a v-bind:href="url" v-html="url"></a>
     <form v-on:submit.prevent="onSubmit">
       <input type="submit" name="" value="提交" />
@@ -48,7 +52,7 @@
     </ul>
     <button v-on:click="counter += 1">点击{{counter}}次</button>
     <button v-on:click="greet('greet')">greet</button>
-    <input type="checkbox" v-model="isChecked" id="isChecked" /><label for="isChecked">{{isChecked}}</label>
+    <input type="checkbox" v-model="isChecked" id="isChecked" /><label for="isChecked">{{ isChecked }}</label>
     <div>
       <input type="checkbox" id="Jack" value="Jack" v-model="checkNames" />
       <label for="Jack">Jack</label>
@@ -70,10 +74,8 @@
       Picked:{{ picked }}
     </div>
     <div>
-      <select v-model="letter">
-        <option>A</option>
-        <option>B</option>
-        <option>C</option>
+      <select v-model="letter" multiple>
+        <option v-for="todo in todos" v-bind:value=" todo.id ">{{ todo.text }}</option>
       </select>
     </div>
     下拉选择：{{letter}}
@@ -91,6 +93,7 @@ export default {
     return {
       h1: 'Welcome to Your App',
       h2:'Essential Links',
+      age:30,
       url:location.href,
       time:'页面加载于：'+new Date().toLocaleString(),
       dynamicId:'dynamicId',
@@ -117,7 +120,7 @@ export default {
       isChecked:true,
       checkNames:[],
       picked:'',
-      letter:''
+      letter:[]
     }
   },
   computed:{ 
@@ -196,8 +199,13 @@ export default {
     'v-Header':vHeader,
     'v-Footer':vFooter,
     'v-todo-item':{
-      props:['todoing'],
-      template:'<div>{{ todoing.id }}.这也是组件-{{ todoing.text }} <button v-on:click="$emit(\'remove\')">X</button></div>'
+      props:['todos','todoing','indexNumber'],
+      template:'<div>{{ todoing.id }}.这也是组件-{{ todoing.text }} <button v-on:click="$emit(\'remove\')">X</button><button v-on:click="removeTodo(todos, indexNumber)">{{ indexNumber }}</button></div>',
+      methods:{
+        removeTodo:function(todos, indexNumber){
+          todos.splice(indexNumber, 1);
+        }
+      }
     }
   }
 }
