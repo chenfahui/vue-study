@@ -19,7 +19,7 @@
     <ol>
       <li v-for="(todo, index) in todos">{{index}} - {{ todo.id }}.{{ todo.text }}</li>
     </ol>
-    <v-todo-item v-for="(item, index) in todos" v-bind:todos="todos" v-bind:todoing="item" v-bind:indexNumber="index" v-bind:id="'todo_'+item.id" v-on:remove="todos.splice(index, 1)"></v-todo-item>
+    <v-todo-item v-for="(item, index) in todos" v-bind:todos="todos" v-bind:todoing="item" v-bind:indexNumber="index" v-bind:key="item.id" v-bind:id="'todo_'+item.id" v-on:remove="todos.splice(index, 1)"></v-todo-item>
     <a v-bind:href="url" v-html="url"></a>
     <form v-on:submit.prevent="onSubmit">
       <input type="submit" name="" value="提交" />
@@ -78,7 +78,14 @@
         <option v-for="todo in todos" v-bind:value=" todo.id ">{{ todo.text }}</option>
       </select>
     </div>
-    下拉选择：{{letter}}
+    <div>下拉选择：{{letter}}</div>
+    <input type="text" v-model="parentMsg" name="">
+    <v-simple-counters message="点击" v-bind:myMessage="parentMsg" class="klass"></v-simple-counters>
+    <div>{{total}}
+      <v-button-counter v-on:increment="incrementTotal"></v-button-counter>
+      <v-button-counter v-on:increment="incrementTotal" v-on:click.native="doTheThing"></v-button-counter>
+    </div>
+    <v-currency-input v-model="price"></v-currency-input>
     <v-Footer></v-Footer>
   </div>
 </template>
@@ -117,10 +124,13 @@ export default {
       loginType:'username',
       numbers:[1,2,3,4,5],
       counter:0,
+      total:0,
       isChecked:true,
       checkNames:[],
       picked:'',
-      letter:[]
+      parentMsg:'',
+      letter:[],
+      price:0
     }
   },
   computed:{ 
@@ -193,6 +203,12 @@ export default {
       if(message){
         alert(message);
       }
+    },
+    incrementTotal:function(){
+      this.total += 1;
+    },
+    doTheThing:function(){
+      console.log('原生事件');
     }
   },
   components:{
@@ -204,6 +220,41 @@ export default {
       methods:{
         removeTodo:function(todos, indexNumber){
           todos.splice(indexNumber, 1);
+        }
+      }
+    },
+    'v-simple-counters':{
+      props:['message','myMessage'],
+      template:'<button v-on:click="counters += 1" class="klass1">{{ myMessage }}{{ message }}{{ counters }}</button>',
+      data:function(){
+        return {
+          counters:0
+        }
+      }
+    },
+    'v-button-counter':{
+      template:'<button v-on:click="incrementCounter">{{ counterz }}</button>',
+      data:function(){
+        return {
+          counterz : 0
+        }
+      },
+      methods:{
+        incrementCounter:function(){
+          this.counterz += 1;
+          this.$emit('increment');
+        }
+      }
+    },
+    'v-currency-input':{
+      template:'<div>$<input type="text" v-bind:value="value" v-on:input="updateValue($event.target.value)" /></div>',
+      props:['value'],
+      methods:{
+        updateValue:function(value){
+          var formattedValue = value.trim();
+          if(Number(formattedValue) != formattedValue) formattedValue = 0;
+
+          this.$emit('input',formattedValue);
         }
       }
     }
