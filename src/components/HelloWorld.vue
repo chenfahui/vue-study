@@ -86,6 +86,15 @@
             <v-button-counter v-on:increment="incrementTotal" v-on:click.native="doTheThing"></v-button-counter>
         </div>
         <v-currency-input v-model="price"></v-currency-input>
+        <div>
+            <h1>我是父级组件</h1>
+            <v-slot-component>
+                <p>我是初始化内容</p>
+                <p>我是初始化内容</p>
+                <p slot="header" slot-scope="child">slot-header {{child.text}}</p>
+                <p slot="footer">slot-footer</p>
+            </v-slot-component>
+        </div>
         <v-Footer></v-Footer>
     </div>
 </template>
@@ -247,7 +256,7 @@ export default {
             }
         },
         'v-currency-input':{
-            template:'<div>$<input type="text" ref="inputs" v-bind:value="value" v-on:input="updateValue($event.target.value)" /></div>',
+            template:'<div>$<input type="text" ref="prices" v-bind:value="value" v-on:input="updateValue($event.target.value)" /></div>',
             props:['value'],
             methods:{
                 updateValue:function(value){
@@ -263,10 +272,18 @@ export default {
                         console.log(formattedValue);
                     }
 
-                    this.$refs.inputs.value = formattedValue;
+                    this.$refs.prices.value = formattedValue;
                     // this.$emit('input',formattedValue);
                 }
             }
+        },
+        'v-slot-component':{
+            template:'<div>'+
+                '<h2>我是子组件</h2>'+
+                '<slot>只有在没有分发内容才显示</slot>'+
+                '<slot name="header" text="hello from child">只有在没有分发内容才显示</slot>'+
+                '<slot name="footer">只有在没有分发内容才显示</slot>'+
+            '</div>'
         }
     }
 }
