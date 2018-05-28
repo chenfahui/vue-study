@@ -109,6 +109,9 @@
                 <option value="v-Footer">v-Footer</option>
             </select>
         </div>
+        <div v-bind:style="{fontSize:fontSize+'em'}">
+            <v-blog-post v-for="todo in todos" v-bind:post="todo" v-on:resizeFontSize="fontSize += 0.1"></v-blog-post>
+        </div>
         <v-Footer></v-Footer>
     </div>
 </template>
@@ -135,6 +138,7 @@ export default {
                 {id:2, text:'整个牛项目'},
                 {id:3, text:'找个靠谱岗位'}
             ],
+            fontSize:1,
             items:[
                 {id:'001', message:'Foo' },
                 {id:'002', message:'Bar' }
@@ -312,6 +316,10 @@ export default {
                     ]
                 }
             }
+        },
+        'v-blog-post':{
+            props:['post'],
+            template:'<div>{{ post.text }}<button v-on:click="$emit(\'resizeFontSize\')" title="加大字号">+</button></div>'
         }
     }
 }
