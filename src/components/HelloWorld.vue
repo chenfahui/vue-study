@@ -95,6 +95,20 @@
                 <p slot="footer">slot-footer</p>
             </v-slot-component>
         </div>
+        <div>
+            <v-awesome-list>
+                <li slot="item" slot-scope="props">{{ props.id }}.{{ props.text }}</li>
+            </v-awesome-list>
+        </div>
+        <div>
+            <keep-alive>
+                <component v-bind:is="currentView"></component>
+            </keep-alive>
+            <select v-model="currentView">
+                <option value="v-Header">v-Header</option>
+                <option value="v-Footer">v-Footer</option>
+            </select>
+        </div>
         <v-Footer></v-Footer>
     </div>
 </template>
@@ -139,7 +153,8 @@ export default {
             picked:'',
             parentMsg:'',
             letter:[],
-            price:0
+            price:0,
+            currentView:'v-Footer'
         }
     },
     computed:{ 
@@ -284,6 +299,19 @@ export default {
                 '<slot name="header" text="hello from child">只有在没有分发内容才显示</slot>'+
                 '<slot name="footer">只有在没有分发内容才显示</slot>'+
             '</div>'
+        },
+        'v-awesome-list':{
+            template:'<ul><slot name="item" v-for="item in items" v-bind:text="item.text" v-bind:id="item.id"></slot></ul>',
+            data:function(){
+                return {
+                    items:[
+                        {id:0, text:'学习javascript'},
+                        {id:1, text:'学习Vue'},
+                        {id:2, text:'整个牛项目'},
+                        {id:3, text:'找个靠谱岗位'}
+                    ]
+                }
+            }
         }
     }
 }
