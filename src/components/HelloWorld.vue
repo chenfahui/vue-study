@@ -110,7 +110,7 @@
             </select>
         </div>
         <div v-bind:style="{fontSize:fontSize+'em'}">
-            <v-blog-post v-for="todo in todos" v-bind:post="todo" v-on:resizeFontSize="fontSize += 0.1"></v-blog-post>
+            <v-blog-post v-for="todo in todos" v-bind:post="todo" v-bind:postFontSize="fontSize" v-on:resizeFontSize="resizeFontSize"></v-blog-post>
         </div>
         <v-Footer></v-Footer>
     </div>
@@ -237,6 +237,9 @@ export default {
         },
         doTheThing:function(){
             console.log('原生事件');
+        },
+        resizeFontSize:function(enlargeAmount){
+            this.fontSize += enlargeAmount;
         }
     },
     components:{
@@ -318,8 +321,8 @@ export default {
             }
         },
         'v-blog-post':{
-            props:['post'],
-            template:'<div>{{ post.text }}<button v-on:click="$emit(\'resizeFontSize\')" title="加大字号">+</button></div>'
+            props:['post','postFontSize'],
+            template:'<div v-bind:style="{\'fontSize\':postFontSize}">{{ post.text }}<button v-on:click="$emit(\'resizeFontSize\', 0.1)" title="加大字号">+</button></div>'
         }
     }
 }
