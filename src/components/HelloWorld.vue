@@ -110,7 +110,17 @@
             </select>
         </div>
         <div v-bind:style="{fontSize:fontSize+'em'}">
-            <v-blog-post v-for="todo in todos" v-bind:post="todo" v-bind:postFontSize="fontSize" v-on:resizeFontSize="resizeFontSize"></v-blog-post>
+            <v-blog-post v-for="todo in todos" v-bind:post="todo" v-bind:postFontSize="fontSize" v-on:resizeFontSize="resizeFontSize" v-bind:key="todo.id"></v-blog-post>
+        </div>
+        <div>
+            <v-custom-input v-bind:value="h1" v-on:input="h1 = $event"></v-custom-input>
+            <v-custom-input v-model="h1"></v-custom-input>
+        </div>
+        <div>
+            <button v-on:click="currentTabComponent = 'v-home-component'">Home</button>
+            <button v-on:click="currentTabComponent = 'v-posts-component'">Posts</button>
+            <button v-on:click="currentTabComponent = 'v-archive-component'">Archive</button>
+            <component v-bind:is="currentTabComponent"></component>
         </div>
         <v-Footer></v-Footer>
     </div>
@@ -158,7 +168,8 @@ export default {
             parentMsg:'',
             letter:[],
             price:0,
-            currentView:'v-Footer'
+            currentView:'v-Footer',
+            currentTabComponent:'v-home-component'
         }
     },
     computed:{ 
@@ -323,6 +334,21 @@ export default {
         'v-blog-post':{
             props:['post','postFontSize'],
             template:'<div v-bind:style="{\'fontSize\':postFontSize}">{{ post.text }}<button v-on:click="$emit(\'resizeFontSize\', 0.1)" title="加大字号">+</button></div>'
+        },
+        'v-custom-input':{
+            props:['value'],
+            template:`
+                <input v-bind:value="value" v-on:input="$emit('input', $event.target.value)" />
+            `
+        },
+        'v-home-component':{
+            template:'<div>Home component</div>'
+        },
+        'v-posts-component':{
+            template:'<div>Posts component</div>'
+        },
+        'v-archive-component':{
+            template:'<div>Archive component</div>'
         }
     }
 }
