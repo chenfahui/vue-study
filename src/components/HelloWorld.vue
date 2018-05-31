@@ -10,8 +10,10 @@
         <button @click.ctrl="doSomething">添加项目(含ctrl)</button>
         <button @click.ctrl.exact="doSomething">添加项目(仅ctrl)</button>
         <p v-if="seen" :class="['seen','seenToo',dynamicId]">{{ seen ? '你看到我了' : '你看不到我了' }}</p>
-        <p v-else>你看不到我了</p>
-        <p v-show="seen">display:inline;</p>
+        <p v-else :class="{'noseen':!seen}">你看不到我了</p>
+        <transition name="fade">
+            <p v-show="seen">display:inline;</p>
+        </transition>
         <div>            
             <input type="number" v-model.number="age" />
             <input type="number" v-bind:value="age" v-on:input="age = $event.target.value" >
@@ -120,7 +122,9 @@
             <button v-on:click="currentTabComponent = 'v-home-component'">Home</button>
             <button v-on:click="currentTabComponent = 'v-posts-component'">Posts</button>
             <button v-on:click="currentTabComponent = 'v-archive-component'">Archive</button>
-            <component v-bind:is="currentTabComponent"></component>
+            <keep-alive>
+                <component v-bind:is="currentTabComponent"></component>
+            </keep-alive>
         </div>
         <v-Footer></v-Footer>
     </div>
@@ -345,7 +349,20 @@ export default {
             template:'<div>Home component</div>'
         },
         'v-posts-component':{
-            template:'<div>Posts component</div>'
+            template:`
+                <div>
+                    Posts component
+                    <button v-on:click="show = !show">toggle</button>
+                    <transition name="fade">
+                        <p v-show="show">hello</p>
+                    </transition>
+                </div>
+            `,
+            data:function(){
+                return {
+                    show:true
+                }
+            }
         },
         'v-archive-component':{
             template:'<div>Archive component</div>'
@@ -370,5 +387,11 @@ li {
 }
 a {
     color: #42b983;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
