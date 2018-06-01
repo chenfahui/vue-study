@@ -126,6 +126,39 @@
                 <component v-bind:is="currentTabComponent"></component>
             </keep-alive>
         </div>
+        <div>
+            <button v-on:click="renders = !renders">Toggle render</button>
+            <transition name="renders">
+                <div v-show="renders">hello</div>
+            </transition>
+        </div>
+        <div>
+            <button v-on:click="bounce = !bounce">Toggle bounce</button>
+            <transition name="bounce" enter-active-class="bounce-enter-animate" v-bind:duration="3000" v-on:before-enter="beforeEnter" v-on:enter="enter" v-on:after-enter="afterEnter" v-on:enter-cancelled="enterCancelled">
+                <div v-if="bounce">bounce</div>
+            </transition>
+        </div>
+        <div>
+            <transition appear appear-class="appear-animate" appear-to-class="appear-animate-to" appear-active-class="appear-animate-active">
+                <div>出场效果</div>
+            </transition>
+        </div>
+        <div>
+            <transition appear appear-class="appear-animate" appear-to-class="appear-animate-to" appear-active-class="appear-animate-active">
+                <div v-if="isEditing" key="Save">Save</div>
+                <div v-else key="Edit">Edit</div>
+            </transition>            
+            <div v-bind:key="isEditing">{{isEditing ? 'Save' : 'Edit'}}</div>
+        </div>
+        <div>
+            <button>{{ buttonMessage }}</button>
+        </div>
+        <div>
+            <transition name="onoff">
+                <button v-if="onoffToggle">on</button>
+                <button v-else>off</button>
+            </transition>
+        </div>
         <v-Footer></v-Footer>
     </div>
 </template>
@@ -173,7 +206,12 @@ export default {
             letter:[],
             price:0,
             currentView:'v-Footer',
-            currentTabComponent:'v-home-component'
+            currentTabComponent:'v-home-component',
+            renders:false,
+            bounce:false,
+            isEditing:true,
+            docState:'Save',
+            onoffToggle:true
         }
     },
     computed:{ 
@@ -189,6 +227,13 @@ export default {
             return this.numbers.filter(function(number){
                 return number % 2 == 0;
             });
+        },
+        buttonMessage:function(){
+            switch(this.docState){
+                case 'Save' : return 'Edit'; break;
+                case 'edited' : return 'Save'; break;
+                case 'editing' : return 'Cancel'; break;
+            }
         }
     },
     created:function(){
@@ -255,6 +300,18 @@ export default {
         },
         resizeFontSize:function(enlargeAmount){
             this.fontSize += enlargeAmount;
+        },
+        beforeEnter:function(){
+            console.log('beforeEnter');
+        },
+        enter:function(){
+            console.log('enter');
+        },
+        afterEnter:function(){
+            console.log('afterEnter');
+        },
+        enterCancelled:function(){
+            console.log('enterCancelled');
         }
     },
     components:{
@@ -394,4 +451,28 @@ a {
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
+
+.renders-enter{opacity:0;}
+.renders-enter-active{transition:all .5s ease-out;}
+.renders-enter-to{opacity:1;}
+.renders-leave{opacity:1;}
+.renders-leave-active{transition:all .5s ease-in;}
+.renders-leave-to{opacity:0;}
+.bounce-enter-animate{animation:bunce-in 2s;}
+.bounce-leave-active{animation:bunce-in 2s reverse;}
+@keyframes bunce-in{
+    0%{
+        transform:scale(0);
+    }
+    50%{
+        transform:scale(1.5);
+    }
+    100%{
+        transform:scale(1);
+    }
+}
+
+.appear-animate{opacity:0;}
+.appear-animate-active{transition:all 5s ease-out;}
+.appear-animate-to{opacity:1;}
 </style>
