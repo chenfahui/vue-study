@@ -104,7 +104,9 @@
         </div>
         <div>
             <keep-alive>
-                <component v-bind:is="currentView"></component>
+                <transition name="renders" mode="out-in">
+                    <component v-bind:is="currentView"></component>
+                </transition>
             </keep-alive>
             <select v-model="currentView">
                 <option value="v-Header">v-Header</option>
@@ -154,10 +156,19 @@
             <button>{{ buttonMessage }}</button>
         </div>
         <div>
-            <transition name="onoff">
-                <button v-if="onoffToggle">on</button>
-                <button v-else>off</button>
+            <transition name="onoff" mode="out-in">
+                <button v-if="onoffToggle" :key="1" v-on:click="onoffToggle = !onoffToggle">on</button>
+                <button v-else :key="2" v-on:click="onoffToggle = !onoffToggle">off</button>
             </transition>
+        </div>
+        <div>
+            <button v-on:click="randomAdd">Add</button>
+            <button v-on:click="randomRemove">Remove</button>
+            <div>
+                <transition-group name="list" tag="p">
+                    <span v-for="item in listItem" :key="item" class="list-item">{{item}}</span>
+                </transition-group>
+            </div>
         </div>
         <v-Footer></v-Footer>
     </div>
@@ -211,7 +222,9 @@ export default {
             bounce:false,
             isEditing:true,
             docState:'Save',
-            onoffToggle:true
+            onoffToggle:true,
+            listItem:[1,2,3,4,5,6,7,8,9],
+            nextNum:10
         }
     },
     computed:{ 
@@ -312,6 +325,15 @@ export default {
         },
         enterCancelled:function(){
             console.log('enterCancelled');
+        },
+        randomIndex:function(){
+            return Math.floor(Math.random() * this.listItem.length);
+        },
+        randomAdd:function(){
+            this.listItem.splice(this.randomIndex(), 0, this.nextNum++);
+        },
+        randomRemove:function(){
+            this.listItem.splice(this.randomIndex(), 1);
         }
     },
     components:{
@@ -475,4 +497,16 @@ a {
 .appear-animate{opacity:0;}
 .appear-animate-active{transition:all 5s ease-out;}
 .appear-animate-to{opacity:1;}
+
+.onoff-enter{opacity:0;transform:translateX(15px);}
+.onoff-enter-active{transition:all 1s ease-out;}
+.onoff-enter-to{opacity:1;transform:translateX(0px);}
+.onoff-leave{opacity:1;transform:translateX(0px);}
+.onoff-leave-active{transition:all 1s ease-out;}
+.onoff-leave-to{opacity:0;transform:translateX(-15px);}
+
+.list-item{display:inline-block;vertical-align:top;margin:10px;}
+.list-enter-active,.list-leave-active{transition:all 1s ease-out;}
+.list-enter,.list-leave-to{opacity:0;transform:translateY(30px);}
+
 </style>
