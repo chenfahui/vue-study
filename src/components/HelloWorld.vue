@@ -508,5 +508,5 @@ a {
 .list-item{display:inline-block;vertical-align:top;margin:10px;}
 .list-enter-active,.list-leave-active{transition:all 1s ease-out;}
 .list-enter,.list-leave-to{opacity:0;transform:translateY(30px);}
-
+.list-move{transition:1s;}
 </style>
