@@ -170,6 +170,16 @@
                 </transition-group>
             </div>
         </div>
+        <div>
+            <input v-model="query" placeholder="过滤" />
+            <ul>
+                <li v-for="todo in computedList">{{todo.text}}</li>
+            </ul>
+        </div>
+        <div>
+            <input type="range" v-model="age" name="">
+            <input type="number" v-model="age" name="" step="10">
+        </div>
         <v-Footer></v-Footer>
     </div>
 </template>
@@ -224,7 +234,8 @@ export default {
             docState:'Save',
             onoffToggle:true,
             listItem:[1,2,3,4,5,6,7,8,9],
-            nextNum:10
+            nextNum:10,
+            query:''
         }
     },
     computed:{ 
@@ -247,6 +258,12 @@ export default {
                 case 'edited' : return 'Save'; break;
                 case 'editing' : return 'Cancel'; break;
             }
+        },
+        computedList:function(){
+            var self = this;
+            return this.todos.filter(function(item){
+                return item.text.toLowerCase().indexOf(self.query.toLowerCase()) !== -1;
+            })
         }
     },
     created:function(){
