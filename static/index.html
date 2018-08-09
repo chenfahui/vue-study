@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+
+    <div id="app">
+        <p v-bind:title="message" v-if="seen">{{ message }}</p>
+        <p>{{ message.split('').reverse().join('') }}</p>
+        <p>{{ reverseMessageComputed }}</p>
+        <input v-model="message">
+        <button v-on:click="reverseMessage">逆转消息</button>
+        <ol>
+            <li v-for="todo in todos">{{ todo.text }}</li>
+        </ol>
+        <ol>
+            <todo-item v-for="todo in todos" v-bind:todo="todo" v-bind:key="todo.id"></todo-item>
+        </ol>
+        <div v-html="rawHtml"></div>
+        <div>{{ rawHtml }}</div>
+    </div>
+
+    <script>
+        Vue.component('todo-item',{
+            props:['todo'],
+            template:'<li>{{ todo.text }}</li>'
+        })
+        var vm = new Vue({
+          el: '#app',
+          data: {
+            message: 'Hello Vue!',
+            seen: true,
+            todos:[
+              {id:0,text:'学习javascript'},
+              {id:1,text:'学习Vue'},
+              {id:2,text:'整个牛项目'}
+            ],
+            rawHtml:'<span style="color:red">123132</span>',
+            time:'',
+            firstName:'Foo',
+            lastName:'Bar'
+          },
+          beforeCreate:function(){
+            console.log('实例未创建：'+this.message)
+          },
+          created:function(){
+            console.log('实例已创建：'+this.message)
+          },
+          beforeMount:function(){
+            console.log('挂载前')
+          },
+          mounted:function(){
+            console.log('挂载后')
+            this.$nextTick(function(){
+              console.log('全部挂载后')
+            })
+          },
+          beforeDestroy:function(){
+            console.log('销毁前')
+          },
+          destroyed:function(){
+            console.log('销毁后')
+          },
+          computed:{
+            reverseMessageComputed:function(){
+              return this.message.split('').reverse().join('')
+            },
+            nowTimeComputed: function () {
+              return this.message + Date.now()
+            },
+            fullName:{
+              get:function(){
+                return this.firstName + ' ' + this.lastName
+              },
+              set:function(newValue){
+                var names = newValue.split(' ')
+                this.firstName = names[0]
+                this.lastName = names[names.length-1]
+              }
+            }
+          },
+          methods:{
+            reverseMessage:function(){
+              this.message = this.message.split('').reverse().join('')
+            },
+            nowTime:function(){
+              return Date.now()
+            }
+          }
+        })
+
+    </script>
+
+    </body>
+</html>

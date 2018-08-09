@@ -2,6 +2,9 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
+import Goods from './components/goods'
+import Ratings from './components/ratings'
+import Seller from './components/seller'
 
 Vue.config.productionTip = false
 
@@ -11,7 +14,10 @@ const About = {template:'<p>About page<a href="../home">home</a></p>'}
 
 const routes = {
     '/home':Home,
-    '/about':About
+    '/about':About,
+    '/goods':Goods,
+    '/ratings':Ratings,
+    '/seller':Seller
 }
 
 /* eslint-disable no-new */
